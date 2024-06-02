@@ -1,0 +1,23 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{{ producto.nombre }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title text-center">{{ producto.nombre }}</h3>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">{{ producto.descripcion }}</p>
+                    <p class="card-text"><strong>Precio:</strong> ${{ producto.precio }}</p>
+                    <p class="card-text"><strong>Categoría:</strong> {{ producto.categoria.nombre }}</p>
+                    <a href="{% url 'lista_productos' %}" class="btn btn-secondary">Volver a la lista de productos</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
