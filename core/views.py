@@ -21,6 +21,7 @@ def lista_productos(request):
     return render(request, 'core/lista_productos.html', {'productos': productos})
 
 
+
 def home(request):
     return render(request, 'core/home.html')
 

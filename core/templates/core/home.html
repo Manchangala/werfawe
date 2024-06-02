@@ -3,10 +3,11 @@
 {% block title %}Inicio{% endblock %}
 
 {% block content %}
-<div class="text-center mt-5">
+<div class="container mt-5">
     <h1>Bienvenido a Quilla's Bakery</h1>
-    <a href="{% url 'login' %}" class="btn btn-primary m-2">Iniciar Sesión</a>
-    <a href="{% url 'registro' %}" class="btn btn-secondary m-2">Registrarse</a>
-    <a href="{% url 'lista_productos' %}" class="btn btn-success m-2">Ver Productos</a>
+    <a href="{% url 'login' %}">Iniciar Sesión</a> | 
+    <a href="{% url 'registro' %}">Registrarse</a> | 
+    <a href="{% url 'lista_productos' %}">Ver Productos</a>  <!-- Asegúrate de que este enlace esté correcto -->
 </div>
 {% endblock %}
+
