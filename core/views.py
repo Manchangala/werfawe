@@ -61,18 +61,21 @@ def detalle_producto(request, producto_id):
 
 def crear_pedido(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
-    if request.method == 'POST':
-        form = PedidoForm(request.POST)
-        if form.is_valid():
-            pedido = form.save(commit=False)
-            pedido.cliente = request.user.cliente
-            pedido.producto = producto
-            pedido.save()
-            return redirect('proceso_pedido', pedido_id=pedido.id)  # Redirigir a proceso_pedido con pedido_id
-    else:
-        form = PedidoForm()
-    return render(request, 'core/crear_pedido.html', {'form': form, 'producto': producto})
+    cliente = Cliente.objects.get(usuario=request.user)
 
+    if request.method == 'POST':
+        pedido = Pedido(
+            cliente=cliente,
+            producto=producto,
+            cantidad=request.POST['cantidad'],
+            direccion_entrega=request.POST['direccion_entrega'],
+            fecha_entrega=request.POST['fecha_entrega'],
+            estado='pendiente'
+        )
+        pedido.save()
+        return redirect('proceso_pedido', pedido_id=pedido.id)
+    
+    return render(request, 'core/crear_pedido.html', {'producto': producto})
 
 def seleccion_producto(request):
     productos = Producto.objects.all()
@@ -137,29 +140,37 @@ def pedido_exitoso(request, pedido_id):
     return render(request, 'core/pedido_exitoso.html', {'pedido': pedido})
 
 
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Pedido
+
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Pedido, Producto
+
 def proceso_pedido(request, pedido_id):
     pedido = get_object_or_404(Pedido, id=pedido_id)
-    step = request.GET.get('step', 1)
-    step = int(step)
-    if step == 1:
-        if request.method == 'POST':
-            # Manejar selección de producto
+    step = int(request.GET.get('step', 1))
+    
+    if request.method == 'POST':
+        if step == 1:
+            producto_id = request.POST.get('producto')
+            producto = get_object_or_404(Producto, id=producto_id)
+            pedido.producto = producto
+            pedido.save()
             step = 2
-            return redirect('proceso_pedido', pedido_id=pedido.id, step=step)
-    elif step == 2:
-        if request.method == 'POST':
+        elif step == 2:
             # Manejar confirmación y personalización del pedido
             step = 3
-            return redirect('proceso_pedido', pedido_id=pedido.id, step=step)
-    elif step == 3:
-        if request.method == 'POST':
-            # Manejar elección de método de entrega
+        elif step == 3:
+            metodo_entrega = request.POST.get('metodo_entrega')
+            pedido.metodo_entrega = metodo_entrega
+            pedido.save()
             step = 4
-            return redirect('proceso_pedido', pedido_id=pedido.id, step=step)
-    elif step == 4:
-        if request.method == 'POST':
+        elif step == 4:
             # Manejar pago y finalización del pedido
             pedido.estado = 'completado'
             pedido.save()
             return redirect('pedido_exitoso', pedido_id=pedido.id)
-    return render(request, 'core/proceso_pedido.html', {'pedido': pedido, 'step': step})
+        return redirect('proceso_pedido', pedido_id=pedido.id, step=step)
+
+    productos = Producto.objects.all()
+    return render(request, 'core/proceso_pedido.html', {'pedido': pedido, 'step': step, 'productos': productos})

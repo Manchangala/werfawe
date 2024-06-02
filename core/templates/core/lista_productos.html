@@ -15,7 +15,13 @@
                         <p class="card-text"><strong>Precio:</strong> ${{ producto.precio }}</p>
                         <a href="{% url 'detalle_producto' producto.id %}" class="btn btn-primary">Ver Detalles</a>
                         {% if user.is_authenticated %}
-                            <a href="{% url 'proceso_pedido' %}" class="btn btn-success">Realizar Pedido</a>
+                            <form method="post" action="{% url 'crear_pedido' producto.id %}" style="margin-top: 10px;">
+                                {% csrf_token %}
+                                <input type="hidden" name="cantidad" value="1">
+                                <input type="hidden" name="direccion_entrega" value="Dirección de prueba">
+                                <input type="hidden" name="fecha_entrega" value="2024-06-01">
+                                <button type="submit" class="btn btn-success">Realizar Pedido</button>
+                            </form>
                         {% endif %}
                     </div>
                 </div>

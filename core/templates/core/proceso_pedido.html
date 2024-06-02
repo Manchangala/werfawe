@@ -5,45 +5,50 @@
 {% block content %}
 <div class="container mt-5">
     <h1>Proceso de Pedido</h1>
-    <div class="steps">
-        <div class="step {% if step >= 1 %}completed{% else %}pending{% endif %}">
-            <h3>Paso 1: Selección del producto</h3>
-            {% if step == 1 %}
-                <form method="post" action="{% url 'proceso_pedido' pedido.id %}?step=2">
-                    {% csrf_token %}
-                    <button type="submit">Siguiente</button>
-                </form>
-            {% endif %}
-        </div>
-        <div class="step {% if step >= 2 %}completed{% else %}pending{% endif %}">
-            <h3>Paso 2: Confirmación y personalización</h3>
-            {% if step == 2 %}
-                <form method="post" action="{% url 'proceso_pedido' pedido.id %}?step=3">
-                    {% csrf_token %}
-                    <button type="submit">Siguiente</button>
-                </form>
-            {% endif %}
-        </div>
-        <div class="step {% if step >= 3 %}completed{% else %}pending{% endif %}">
-            <h3>Paso 3: Método de entrega</h3>
-            {% if step == 3 %}
-                <form method="post" action="{% url 'proceso_pedido' pedido.id %}?step=4">
-                    {% csrf_token %}
-                    <button type="submit">Siguiente</button>
-                </form>
-            {% endif %}
-        </div>
-        <div class="step {% if step >= 4 %}completed{% else %}pending{% endif %}">
-            <h3>Paso 4: Pago y finalización</h3>
-            {% if step == 4 %}
-                <form method="post" action="{% url 'pedido_exitoso' pedido.id %}">
-                    {% csrf_token %}
-                    <button type="submit">Finalizar</button>
-                </form>
-            {% endif %}
-        </div>
-    </div>
+    <ul class="list-group mb-4">
+        <li class="list-group-item {% if step >= 1 %}list-group-item-success{% else %}list-group-item-danger{% endif %}">
+            Paso 1: Selección del producto
+        </li>
+        <li class="list-group-item {% if step >= 2 %}list-group-item-success{% else %}list-group-item-danger{% endif %}">
+            Paso 2: Confirmación y personalización
+        </li>
+        <li class="list-group-item {% if step >= 3 %}list-group-item-success{% else %}list-group-item-danger{% endif %}">
+            Paso 3: Método de entrega
+        </li>
+        <li class="list-group-item {% if step >= 4 %}list-group-item-success{% else %}list-group-item-danger{% endif %}">
+            Paso 4: Pago y finalización
+        </li>
+    </ul>
+
+    <form method="post" class="form-inline">
+        {% csrf_token %}
+        {% if step == 1 %}
+            <h3>Selecciona el producto</h3>
+            <select name="producto" class="form-control mb-3">
+                {% for producto in productos %}
+                    <option value="{{ producto.id }}">{{ producto.nombre }} - ${{ producto.precio }}</option>
+                {% endfor %}
+            </select>
+        {% elif step == 2 %}
+            <h3>Confirmación y personalización</h3>
+            <!-- Aquí puedes agregar opciones de personalización -->
+        {% elif step == 3 %}
+            <h3>Método de entrega</h3>
+            <label for="metodo_entrega">Elige método de entrega:</label>
+            <select name="metodo_entrega" id="metodo_entrega" class="form-control mb-3">
+                <option value="tienda">Recoger en tienda</option>
+                <option value="domicilio">Entrega a domicilio</option>
+            </select>
+        {% elif step == 4 %}
+            <h3>Pago y finalización</h3>
+            <p>Total a pagar: ${{ pedido.total }}</p>
+            <!-- Aquí puedes agregar detalles de pago -->
+        {% endif %}
+        <button type="submit" class="btn btn-primary">Siguiente</button>
+    </form>
 </div>
 {% endblock %}
+
+
 
 

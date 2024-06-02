@@ -9,6 +9,6 @@ urlpatterns = [
     path('registro/', views.registro, name='registro'),
     path('login/', views.login_view, name='login'),
     path('pedido/<int:pedido_id>/proceso/', views.proceso_pedido, name='proceso_pedido'),
-    path('proceso_pedido/', views.proceso_pedido, name='proceso_pedido'),  # Nueva URL para el proceso
+   
 ]
 
