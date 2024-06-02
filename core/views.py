@@ -61,21 +61,22 @@ def detalle_producto(request, producto_id):
 
 def crear_pedido(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
-    cliente = Cliente.objects.get(usuario=request.user)
-
+    cliente = request.user
     if request.method == 'POST':
+        cantidad = request.POST.get('cantidad')
+        direccion_entrega = request.POST.get('direccion_entrega')
+        fecha_entrega = request.POST.get('fecha_entrega')
         pedido = Pedido(
-            cliente=cliente,
             producto=producto,
-            cantidad=request.POST['cantidad'],
-            direccion_entrega=request.POST['direccion_entrega'],
-            fecha_entrega=request.POST['fecha_entrega'],
+            cliente=cliente,
+            cantidad=cantidad,
+            direccion_entrega=direccion_entrega,
+            fecha_entrega=fecha_entrega,
             estado='pendiente'
         )
         pedido.save()
         return redirect('proceso_pedido', pedido_id=pedido.id)
-    
-    return render(request, 'core/crear_pedido.html', {'producto': producto})
+    return render(request, 'core/proceso_pedido.html')
 
 def seleccion_producto(request):
     productos = Producto.objects.all()
