@@ -1,4 +1,19 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmación y Personalización</title>
+</head>
+<body>
+    <h1>Confirmación y Personalización</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Guardar y Continuar</button>
+    </form>
+</body>
+</html>
+<!DOCTYPE html>
 <html>
 <head>
     <title>Proceso de Pedido</title>
@@ -62,9 +77,3 @@
     </div>
 </body>
 </html>
-
-
-
-
-
-

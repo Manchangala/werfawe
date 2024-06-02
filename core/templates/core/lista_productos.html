@@ -1,33 +1,28 @@
-{% extends 'core/base.html' %}
-
-{% block title %}Lista de Productos{% endblock %}
-
+{% extends 'base.html' %}
+{% block title %}Product List{% endblock %}
 {% block content %}
-<div class="container mt-5">
-    <h1 class="text-center">Lista de Productos</h1>
-    <div class="row">
-        {% for producto in productos %}
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ producto.nombre }}</h5>
-                        <p class="card-text">{{ producto.descripcion }}</p>
-                        <p class="card-text"><strong>Precio:</strong> ${{ producto.precio }}</p>
-                        <a href="{% url 'detalle_producto' producto.id %}" class="btn btn-primary">Ver Detalles</a>
-                        {% if user.is_authenticated %}
-                            <form method="post" action="{% url 'crear_pedido' producto.id %}" style="margin-top: 10px;">
-                                {% csrf_token %}
-                                <input type="hidden" name="cantidad" value="1">
-                                <input type="hidden" name="direccion_entrega" value="Dirección de prueba">
-                                <input type="hidden" name="fecha_entrega" value="2024-06-01">
-                                <button type="submit" class="btn btn-success">Realizar Pedido</button>
-                            </form>
-                        {% endif %}
-                    </div>
-                </div>
+<h1 class="text-center">Lista de Productos</h1>
+<div class="row">
+    {% for producto in productos %}
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ producto.nombre }}</h5>
+                <p class="card-text">{{ producto.descripcion }}</p>
+                <p class="card-text"><strong>Precio:</strong> ${{ producto.precio }}</p>
+                <a href="{% url 'detalle_producto' producto.id %}" class="btn btn-primary">Ver Detalles</a>
+                {% if user.is_authenticated %}
+                <form method="post" action="{% url 'crear_pedido' producto.id %}" style="margin-top: 10px;">
+                    {% csrf_token %}
+                    <input type="hidden" name="cantidad" value="1">
+                    <input type="hidden" name="direccion_entrega" value="Dirección de prueba">
+                    <input type="hidden" name="fecha_entrega" value="2024-06-01">
+                    <button type="submit" class="btn btn-success">Realizar Pedido</button>
+                </form>
+                {% endif %}
             </div>
-        {% endfor %}
+        </div>
     </div>
+    {% endfor %}
 </div>
 {% endblock %}
-

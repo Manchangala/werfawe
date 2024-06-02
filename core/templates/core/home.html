@@ -1,11 +1,10 @@
-{% extends 'core/base.html' %}
-
-{% block title %}Inicio{% endblock %}
-
-{% block content %}
-<div class="container mt-5">
-    <h1>Bienvenido a Quilla's Bakery</h1>
-    <a href="{% url 'login' %}">Iniciar Sesión</a> | 
-    <a href="{% url 'registro' %}">Registrarse</a>
-</div>
-{% endblock %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+</head>
+<body>
+    <h1>Welcome to Quillas Bakery</h1>
+    <a href="{% url 'lista_productos' %}">Ver Productos</a>
+</body>
+</html>

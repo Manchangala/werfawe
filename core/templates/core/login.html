@@ -1,15 +1,10 @@
-{% extends 'core/base.html' %}
-
+{% extends 'base.html' %}
 {% block title %}Login{% endblock %}
-
 {% block content %}
-<div class="container mt-5">
-    <h1>Login</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
-    </form>
-</div>
+<h1>Login</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Login</button>
+</form>
 {% endblock %}
-
