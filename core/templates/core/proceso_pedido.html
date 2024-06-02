@@ -1,0 +1,49 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Proceso de Pedido{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Proceso de Pedido</h1>
+    <div class="steps">
+        <div class="step {% if step >= 1 %}completed{% else %}pending{% endif %}">
+            <h3>Paso 1: Selección del producto</h3>
+            {% if step == 1 %}
+                <form method="post" action="{% url 'proceso_pedido' pedido.id %}?step=2">
+                    {% csrf_token %}
+                    <button type="submit">Siguiente</button>
+                </form>
+            {% endif %}
+        </div>
+        <div class="step {% if step >= 2 %}completed{% else %}pending{% endif %}">
+            <h3>Paso 2: Confirmación y personalización</h3>
+            {% if step == 2 %}
+                <form method="post" action="{% url 'proceso_pedido' pedido.id %}?step=3">
+                    {% csrf_token %}
+                    <button type="submit">Siguiente</button>
+                </form>
+            {% endif %}
+        </div>
+        <div class="step {% if step >= 3 %}completed{% else %}pending{% endif %}">
+            <h3>Paso 3: Método de entrega</h3>
+            {% if step == 3 %}
+                <form method="post" action="{% url 'proceso_pedido' pedido.id %}?step=4">
+                    {% csrf_token %}
+                    <button type="submit">Siguiente</button>
+                </form>
+            {% endif %}
+        </div>
+        <div class="step {% if step >= 4 %}completed{% else %}pending{% endif %}">
+            <h3>Paso 4: Pago y finalización</h3>
+            {% if step == 4 %}
+                <form method="post" action="{% url 'pedido_exitoso' pedido.id %}">
+                    {% csrf_token %}
+                    <button type="submit">Finalizar</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

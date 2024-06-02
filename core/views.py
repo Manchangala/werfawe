@@ -61,23 +61,17 @@ def detalle_producto(request, producto_id):
 
 def crear_pedido(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
-    cliente, created = Cliente.objects.get_or_create(usuario=request.user, defaults={
-        'direccion': 'Dirección de prueba',
-        'telefono': '0000000000'
-    })
     if request.method == 'POST':
-        cantidad = int(request.POST.get('cantidad', 1))
-        direccion_entrega = request.POST.get('direccion_entrega')
-        fecha_entrega = request.POST.get('fecha_entrega')
-        pedido = Pedido.objects.create(
-            cliente=cliente,
-            direccion_entrega=direccion_entrega,
-            fecha_entrega=fecha_entrega,
-            estado='pendiente'
-        )
-        PedidoProducto.objects.create(pedido=pedido, producto=producto, cantidad=cantidad)
-        return redirect('detalle_producto', producto_id=producto.id)
-    return redirect('lista_productos')
+        form = PedidoForm(request.POST)
+        if form.is_valid():
+            pedido = form.save(commit=False)
+            pedido.cliente = request.user.cliente
+            pedido.producto = producto
+            pedido.save()
+            return redirect('proceso_pedido', pedido_id=pedido.id)  # Redirigir a proceso_pedido con pedido_id
+    else:
+        form = PedidoForm()
+    return render(request, 'core/crear_pedido.html', {'form': form, 'producto': producto})
 
 
 def seleccion_producto(request):
@@ -141,3 +135,31 @@ def pago_finalizacion(request):
 def pedido_exitoso(request, pedido_id):
     pedido = get_object_or_404(Pedido, id=pedido_id)
     return render(request, 'core/pedido_exitoso.html', {'pedido': pedido})
+
+
+def proceso_pedido(request, pedido_id):
+    pedido = get_object_or_404(Pedido, id=pedido_id)
+    step = request.GET.get('step', 1)
+    step = int(step)
+    if step == 1:
+        if request.method == 'POST':
+            # Manejar selección de producto
+            step = 2
+            return redirect('proceso_pedido', pedido_id=pedido.id, step=step)
+    elif step == 2:
+        if request.method == 'POST':
+            # Manejar confirmación y personalización del pedido
+            step = 3
+            return redirect('proceso_pedido', pedido_id=pedido.id, step=step)
+    elif step == 3:
+        if request.method == 'POST':
+            # Manejar elección de método de entrega
+            step = 4
+            return redirect('proceso_pedido', pedido_id=pedido.id, step=step)
+    elif step == 4:
+        if request.method == 'POST':
+            # Manejar pago y finalización del pedido
+            pedido.estado = 'completado'
+            pedido.save()
+            return redirect('pedido_exitoso', pedido_id=pedido.id)
+    return render(request, 'core/proceso_pedido.html', {'pedido': pedido, 'step': step})
