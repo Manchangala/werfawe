@@ -1,54 +1,78 @@
-{% extends 'core/base.html' %}
-
-{% block title %}Proceso de Pedido{% endblock %}
-
-{% block content %}
-<div class="container mt-5">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Proceso de Pedido</title>
+    <style>
+        .step {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        .completed {
+            background-color: #d4edda;
+        }
+        .pending {
+            background-color: #f8d7da;
+        }
+    </style>
+    <script>
+        function toggleStep(stepNumber) {
+            const content = document.getElementById('step' + stepNumber + 'Content');
+            if (content.style.display === 'none' || content.style.display === '') {
+                content.style.display = 'block';
+            } else {
+                content.style.display = 'none';
+            }
+        }
+    </script>
+</head>
+<body>
     <h1>Proceso de Pedido</h1>
-    <ul class="list-group mb-4">
-        <li class="list-group-item {% if step >= 1 %}list-group-item-success{% else %}list-group-item-danger{% endif %}">
-            Paso 1: Selección del producto
-        </li>
-        <li class="list-group-item {% if step >= 2 %}list-group-item-success{% else %}list-group-item-danger{% endif %}">
-            Paso 2: Confirmación y personalización
-        </li>
-        <li class="list-group-item {% if step >= 3 %}list-group-item-success{% else %}list-group-item-danger{% endif %}">
-            Paso 3: Método de entrega
-        </li>
-        <li class="list-group-item {% if step >= 4 %}list-group-item-success{% else %}list-group-item-danger{% endif %}">
-            Paso 4: Pago y finalización
-        </li>
-    </ul>
-
-    <form method="post" class="form-inline">
-        {% csrf_token %}
-        {% if step == 1 %}
-            <h3>Selecciona el producto</h3>
-            <select name="producto" class="form-control mb-3">
-                {% for producto in productos %}
-                    <option value="{{ producto.id }}">{{ producto.nombre }} - ${{ producto.precio }}</option>
-                {% endfor %}
-            </select>
-        {% elif step == 2 %}
-            <h3>Confirmación y personalización</h3>
-            <!-- Aquí puedes agregar opciones de personalización -->
-        {% elif step == 3 %}
-            <h3>Método de entrega</h3>
-            <label for="metodo_entrega">Elige método de entrega:</label>
-            <select name="metodo_entrega" id="metodo_entrega" class="form-control mb-3">
-                <option value="tienda">Recoger en tienda</option>
-                <option value="domicilio">Entrega a domicilio</option>
-            </select>
-        {% elif step == 4 %}
-            <h3>Pago y finalización</h3>
-            <p>Total a pagar: ${{ pedido.total }}</p>
-            <!-- Aquí puedes agregar detalles de pago -->
-        {% endif %}
-        <button type="submit" class="btn btn-primary">Siguiente</button>
-    </form>
-</div>
-{% endblock %}
-
+    <div class="step {% if step >= 1 %}completed{% else %}pending{% endif %}" onclick="toggleStep(1)">
+        <h2>Paso 1: Selección del producto</h2>
+        <div id="step1Content" style="display: none;">
+            <form method="post" action="{% url 'proceso_pedido' pedido.id %}?step=1">
+                {% csrf_token %}
+                {{ form.producto.label_tag }} {{ form.producto }}
+                {{ form.cantidad.label_tag }} {{ form.cantidad }}
+                <button type="submit">Guardar y Continuar</button>
+            </form>
+        </div>
+    </div>
+    <div class="step {% if step >= 2 %}completed{% else %}pending{% endif %}" onclick="toggleStep(2)">
+        <h2>Paso 2: Confirmación y personalización</h2>
+        <div id="step2Content" style="display: none;">
+            <form method="post" action="{% url 'proceso_pedido' pedido.id %}?step=2">
+                {% csrf_token %}
+                {{ form.personalizacion.label_tag }} {{ form.personalizacion }}
+                <button type="submit">Guardar y Continuar</button>
+            </form>
+        </div>
+    </div>
+    <div class="step {% if step >= 3 %}completed{% else %}pending{% endif %}" onclick="toggleStep(3)">
+        <h2>Paso 3: Método de entrega</h2>
+        <div id="step3Content" style="display: none;">
+            <form method="post" action="{% url 'proceso_pedido' pedido.id %}?step=3">
+                {% csrf_token %}
+                {{ form.metodo_entrega.label_tag }} {{ form.metodo_entrega }}
+                <button type="submit">Guardar y Continuar</button>
+            </form>
+        </div>
+    </div>
+    <div class="step {% if step >= 4 %}completed{% else %}pending{% endif %}" onclick="toggleStep(4)">
+        <h2>Paso 4: Pago y finalización</h2>
+        <div id="step4Content" style="display: none;">
+            <form method="post" action="{% url 'proceso_pedido' pedido.id %}?step=4">
+                {% csrf_token %}
+                {{ form.metodo_pago.label_tag }} {{ form.metodo_pago }}
+                <button type="submit">Finalizar Pedido</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
 
 
 

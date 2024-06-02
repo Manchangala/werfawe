@@ -1,34 +1,94 @@
-{% extends 'core/base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proceso de Pedido</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        .step-red {
+            background-color: #f8d7da;
+        }
+        .step-green {
+            background-color: #d4edda;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Proceso de Pedido</h1>
 
-{% block title %}Paso 3: Elección de Entrega{% endblock %}
+        <div class="card mb-3" id="step1" onclick="toggleStep(1)">
+            <div class="card-header step-red">Paso 1: Selección del producto</div>
+            <div class="card-body" style="display:none;">
+                <form method="post" action="">
+                    <div class="form-group">
+                        <label for="producto">Producto</label>
+                        <select id="producto" name="producto" class="form-control">
+                            <!-- Opciones de productos -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="cantidad">Cantidad</label>
+                        <input type="number" id="cantidad" name="cantidad" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Guardar y Continuar</button>
+                </form>
+            </div>
+        </div>
 
-{% block content %}
-<div class="container mt-5">
-    <h1>Paso 3: Elección de Entrega</h1>
-    <div class="progress">
-        <div class="progress-bar bg-success" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">Paso 1</div>
-        <div class="progress-bar bg-success" role="progressbar" style="width: 25%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">Paso 2</div>
-        <div class="progress-bar bg-success" role="progressbar" style="width: 25%;" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">Paso 3</div>
-        <div class="progress-bar bg-danger" role="progressbar" style="width: 25%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">Paso 4</div>
+        <div class="card mb-3" id="step2" onclick="toggleStep(2)">
+            <div class="card-header step-red">Paso 2: Confirmación y personalización</div>
+            <div class="card-body" style="display:none;">
+                <form method="post" action="">
+                    <div class="form-group">
+                        <label for="personalizacion">Personalización</label>
+                        <textarea id="personalizacion" name="personalizacion" class="form-control"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Guardar y Continuar</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card mb-3" id="step3" onclick="toggleStep(3)">
+            <div class="card-header step-red">Paso 3: Método de entrega</div>
+            <div class="card-body" style="display:none;">
+                <form method="post" action="">
+                    <div class="form-group">
+                        <label for="metodo_entrega">Método de Entrega</label>
+                        <select id="metodo_entrega" name="metodo_entrega" class="form-control">
+                            <option value="tienda">Recoger en tienda</option>
+                            <option value="domicilio">Entrega a domicilio</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Guardar y Continuar</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card mb-3" id="step4" onclick="toggleStep(4)">
+            <div class="card-header step-red">Paso 4: Pago y finalización</div>
+            <div class="card-body" style="display:none;">
+                <form method="post" action="">
+                    <div class="form-group">
+                        <label for="pago">Método de Pago</label>
+                        <select id="pago" name="pago" class="form-control">
+                            <!-- Opciones de pago -->
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-success">Finalizar Pedido</button>
+                </form>
+            </div>
+        </div>
     </div>
-    <form method="post" class="mt-3">
-        {% csrf_token %}
-        <div class="mb-3">
-            <label for="tipo_entrega" class="form-label">Tipo de Entrega</label>
-            <select name="tipo_entrega" id="tipo_entrega" class="form-control">
-                <option value="domicilio">Domicilio</option>
-                <option value="recogida">Recogida en Tienda</option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label for="direccion_entrega" class="form-label">Dirección de Entrega</label>
-            <input type="text" name="direccion_entrega" id="direccion_entrega" class="form-control">
-        </div>
-        <div class="mb-3">
-            <label for="fecha_entrega" class="form-label">Fecha de Entrega</label>
-            <input type="date" name="fecha_entrega" id="fecha_entrega" class="form-control">
-        </div>
-        <button type="submit" class="btn btn-primary">Continuar</button>
-    </form>
-</div>
-{% endblock %}
+
+    <script>
+        function toggleStep(step) {
+            var cardBody = document.querySelector("#step" + step + " .card-body");
+            var displayStyle = cardBody.style.display === "none" ? "block" : "none";
+            cardBody.style.display = displayStyle;
+        }
+    </script>
+</body>
+</html>
+

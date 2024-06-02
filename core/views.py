@@ -142,36 +142,50 @@ def pedido_exitoso(request, pedido_id):
 
 
 from django.shortcuts import render, get_object_or_404, redirect
+from .forms import SeleccionProductoForm, ConfirmacionPersonalizacionForm, MetodoEntregaForm, PagoForm
 from .models import Pedido
-
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import Pedido, Producto
 
 def proceso_pedido(request, pedido_id):
     pedido = get_object_or_404(Pedido, id=pedido_id)
-    step = int(request.GET.get('step', 1))
-    
-    if request.method == 'POST':
-        if step == 1:
-            producto_id = request.POST.get('producto')
-            producto = get_object_or_404(Producto, id=producto_id)
-            pedido.producto = producto
-            pedido.save()
-            step = 2
-        elif step == 2:
-            # Manejar confirmación y personalización del pedido
-            step = 3
-        elif step == 3:
-            metodo_entrega = request.POST.get('metodo_entrega')
-            pedido.metodo_entrega = metodo_entrega
-            pedido.save()
-            step = 4
-        elif step == 4:
-            # Manejar pago y finalización del pedido
-            pedido.estado = 'completado'
-            pedido.save()
-            return redirect('pedido_exitoso', pedido_id=pedido.id)
-        return redirect('proceso_pedido', pedido_id=pedido.id, step=step)
+    step = request.GET.get('step', 1)
+    step = int(step)
 
-    productos = Producto.objects.all()
-    return render(request, 'core/proceso_pedido.html', {'pedido': pedido, 'step': step, 'productos': productos})
+    if step == 1:
+        if request.method == 'POST':
+            form = SeleccionProductoForm(request.POST)
+            if form.is_valid():
+                # Procesar selección de producto
+                step = 2
+                return redirect('proceso_pedido', pedido_id=pedido.id, step=step)
+        else:
+            form = SeleccionProductoForm()
+    elif step == 2:
+        if request.method == 'POST':
+            form = ConfirmacionPersonalizacionForm(request.POST)
+            if form.is_valid():
+                # Procesar confirmación y personalización del pedido
+                step = 3
+                return redirect('proceso_pedido', pedido_id=pedido.id, step=step)
+        else:
+            form = ConfirmacionPersonalizacionForm()
+    elif step == 3:
+        if request.method == 'POST':
+            form = MetodoEntregaForm(request.POST)
+            if form.is_valid():
+                # Procesar elección de método de entrega
+                step = 4
+                return redirect('proceso_pedido', pedido_id=pedido.id, step=step)
+        else:
+            form = MetodoEntregaForm()
+    elif step == 4:
+        if request.method == 'POST':
+            form = PagoForm(request.POST)
+            if form.is_valid():
+                # Procesar pago y finalizar pedido
+                pedido.estado = 'completado'
+                pedido.save()
+                return redirect('pedido_exitoso', pedido_id=pedido.id)
+        else:
+            form = PagoForm()
+
+    return render(request, 'core/proceso_pedido.html', {'pedido': pedido, 'step': step, 'form': form})
